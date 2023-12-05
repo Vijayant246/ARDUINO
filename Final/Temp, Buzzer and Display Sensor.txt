@@ -1,0 +1,129 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+float temp;
+const int ledR = 12;
+const int ledB = 11;
+const int ledG = 10;
+const int lm35_pin = A3;
+float vout;
+float voltage;
+LiquidCrystal_I2C lcd_1(0x27, 20, 4);
+void setup()
+{
+    Serial.begin(9600);
+    // put your setup code here, to run once:
+    pinMode(ledR, OUTPUT);
+    pinMode(ledB, OUTPUT);
+    pinMode(ledG, OUTPUT);
+    pinMode(lm35_pin,INPUT);
+    Serial.println("-------------------------");
+    Serial.println("Processing");
+    delay(1000);
+    Serial.println("-------------------------");
+    lcd_1.begin(20, 4);
+    lcd_1.setBacklight(1);
+    lcd_1.setCursor(0, 0);
+    lcd_1.print("    TEMPERATURE");
+    lcd_1.setCursor(0, 1);
+    lcd_1.print("        AND");
+    lcd_1.setCursor(0, 2);
+    lcd_1.print("       LIGHT");
+    lcd_1.setCursor(0, 3);
+    lcd_1.print("     INDICATOR");
+    delay(5000);
+    lcd_1.clear();
+}
+
+void loop()
+{
+    voltage = analogRead(lm35_pin); //Temerature Read
+    vout = (voltage * (3300 /1024)); // Covert adc value to Equivalent Voltage
+    temp = (vout)/10;
+    if (temp >= 60 && temp > 50)
+    {
+        Serial.print("Temperature in Celcius = ");
+        Serial.println(temp);
+        lcd_1.begin(20, 4);
+        lcd_1.setCursor(0, 0);
+        lcd_1.println("TEMPERATUER = ");
+        lcd_1.setCursor(14, 0);
+        lcd_1.print(temp);
+        lcd_1.setCursor(0, 1);
+        lcd_1.print("VERY HOT");
+        digitalWrite(ledR, HIGH);
+        delay(2000);
+        digitalWrite(ledR, LOW);
+        delay(2000);
+        lcd_1.clear();
+    }
+/*
+    else if (temp <= 50 && temp > 30)
+    {
+        Serial.print("Temperature in Celcius = ");
+        Serial.println(temp);
+        lcd_1.setCursor(0, 0);
+        lcd_1.println("TEMPERATUER = ");
+        lcd_1.setCursor(15, 0);
+        lcd_1.print(temp);
+        lcd_1.setCursor(0, 1);
+        lcd_1.print("Hot");
+        digitalWrite(12, HIGH);
+        delay(2000);
+        digitalWrite(12, LOW);
+        delay(2000);
+        lcd_1.clear();
+    }*/
+    else if (temp <= 30 && temp >= 25)
+    {
+        Serial.print("Temperature in Celcius = ");
+        Serial.println(temp);
+        lcd_1.begin(20, 4);
+        lcd_1.setCursor(0, 0);
+        lcd_1.println("TEMPERATUER = ");
+        lcd_1.setCursor(14, 0);
+        lcd_1.print(temp);
+        lcd_1.setCursor(0, 1);
+        lcd_1.print("ROOM TEMPERATURE");
+        digitalWrite(ledG, HIGH);
+        delay(2000);
+        digitalWrite(ledG, LOW);
+        delay(2000);
+        lcd_1.clear();
+    }
+    else if (temp <= 20 && temp > 10)
+    {
+        Serial.print("Temperature in Celcius = ");
+        Serial.println(temp);
+        lcd_1.begin(20, 4);
+        lcd_1.setCursor(0, 0);
+        lcd_1.println("TEMPERATUER = ");
+        lcd_1.setCursor(14, 0);
+        lcd_1.print(temp);
+        lcd_1.setCursor(0, 1);
+        lcd_1.print("COLD");
+        digitalWrite(ledG, HIGH);
+        delay(2000);
+        digitalWrite(ledG, LOW);
+        delay(2000);
+        lcd_1.clear();
+    }
+    /*
+    else if (temp < 15)
+    {
+        Serial.print("Temperature in Celcius = ");
+        Serial.println(temp);
+        lcd_1.begin(20, 4);
+        lcd_1.setCursor(0, 0);
+        lcd_1.println("TEMPERATUER = ");
+        lcd_1.setCursor(15, 0);
+        lcd_1.print(temp);
+        lcd_1.setCursor(0, 1);
+        lcd_1.print("FREEZING");
+        digitalWrite(ledG, HIGH);
+        delay(2000);
+        digitalWrite(ledG, LOW);
+        delay(2000);
+        lcd_1.clear();
+    }
+    */
+}
